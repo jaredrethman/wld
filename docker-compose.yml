@@ -1,0 +1,49 @@
+version: '3.8'
+
+services:
+  nginx:
+    image: nginx:latest
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx/:/etc/nginx/conf.d:ro
+      - ./ssl/certs:/etc/nginx/ssl/certs:ro
+      - ./sites:/var/www/html
+    depends_on:
+      - php-8
+      - mariadb
+    networks:
+      - wp-network
+
+  php-8:
+    image: php:8.0-fpm
+    volumes:
+      - ./sites:/var/www/html
+    networks:
+      - wp-network
+    environment:
+      - FILE_ENV=env/default.env
+
+  mariadb:
+    image: mariadb:latest
+    environment:
+      - MYSQL_ROOT_PASSWORD=rootpassword
+      - MARIADB_ROOT_PASSWORD=rootpassword
+    volumes:
+      - ./mariadb:/var/lib/mysql
+    networks:
+      - wp-network
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    ports:
+      - "8080:80"
+    depends_on:
+      - mariadb
+    networks:
+      - wp-network
+
+networks:
+  wp-network:
+    driver: bridge
