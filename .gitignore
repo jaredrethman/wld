@@ -4,13 +4,10 @@ certs/*.pem
 
 # wp-content
 sites/*.*/*
-# !sites/*.*/wp-content
-# sites/wp-content/uploads
+!sites/*.*/wp-content
+!sites/*.*/wp-config.txt
+!sites/*.*/.env
+sites/wp-content/uploads
 
-# sites/*.*.*/*
-# !sites/*.*.*/wp-content
-# sites/wp-content/uploads
-
-# Environment files
-# env/*.env
-# !env/default.env
+# config
+config/nginx/sites

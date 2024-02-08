@@ -2,18 +2,9 @@
 set -euo pipefail
 
 SCRIPT_PATH="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-WP_PATH=$(dirname "$SCRIPT_PATH")
+ROOT_PATH=$(dirname "${SCRIPT_PATH}")
 
-if [[ ! -f "${WP_PATH}/.env" ]]; then
-  echo "\".env\" file not detected."; exit
-fi
-
-# Load .env
-source "${WP_PATH}/.env"
-
-CORE_DIR="${WP_PATH}/core"
-CERTS_DIR="${WP_PATH}/config/nginx/certs"
-DOMAIN_NAME="${DOMAIN_NAME:-localhost}"
+CERTS_DIR="${ROOT_PATH}/config/certs"
 
 # UNTESTED
 if command -v mkcert &> /dev/null; then

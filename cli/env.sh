@@ -1,67 +1,52 @@
-#!/bin/bash
+#!/usr/bin/env bash
+set -euo pipefail
 
 SCRIPT_PATH="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 ROOT_PATH=$(dirname "${SCRIPT_PATH}")
 
-# Define the directory containing your .env files
-ENV_DIR="${ROOT_PATH}/env"
-NGINX_CONFIG_DIR="./config/nginx/sites-available"
+SITES_DIR="${ROOT_PATH}/sites"
+NGINX_CONFIG_DIR="./config/nginx/sites"
 TEMPLATE_FILE="./config/nginx/nginx-site.conf.template"
 
-# Ensure the output directory exists
-mkdir -p "${NGINX_CONFIG_DIR}"
-
-# Load default environment variables first
-# if [ -f "${ENV_DIR}/default.env" ]; then
-#     export $(grep -v '^#' "${ENV_DIR}/default.env" | xargs)
-# fi
-
-# Function to read and apply environment variables from a file
-# apply_env() {
-#     local env_file=$1
-#     echo "Processing $env_file"
-#     local tmp_env=$(mktemp)
-#     if [ -f "$ENV_DIR/default.env" ]; then
-#         cat "$ENV_DIR/default.env" >"$tmp_env"
-#     fi
-#     cat "$env_file" >>"$tmp_env"
-#     while IFS='=' read -r key value || [[ -n "$key" ]]; do
-#         [[ $key = \#* || $key = "" || ! $key == *\=* ]] && continue
-#         echo "$key=$value"
-#     done <"$tmp_env"
-#     # Clean up the temporary file
-#     rm "$tmp_env"
-# }
-
-nginx_for_env() {
-    local domain_name=$1
+nginx_site_conf() {
     envsubst '${DOMAIN_NAME}' <"$TEMPLATE_FILE" >"${NGINX_CONFIG_DIR}/${DOMAIN_NAME}.conf"
+}
+
+install_wordpress_files() {
+    sh "${ROOT_PATH}/cli/install.sh"
+}
+
+generate_certs() {
+    sh "${ROOT_PATH}/cli/certs.sh"
 }
 
 # Main function
 main() {
-    # Loop through all .env files except for default.env
-    find "${ENV_DIR}" -type f -name "*.env" ! -name "default.env" -exec basename {} .env ';' | while read domain_env; do
+    for SITE_DIR in "${SITES_DIR}"/*; do
+        if [ -d "${SITE_DIR}" ]; then
+            # Set default .env vars as base for environment variables
+            export $(grep -v '^#' "${ROOT_PATH}/.env" | xargs)
+            export DOMAIN_NAME=$(basename "${SITE_DIR}")
+            env_file="${SITES_DIR}/${DOMAIN_NAME}/.env"
+            if [ -f "${env_file}" ]; then
+                # Export site specific .env variables
+                export $(grep -v '^#' "${env_file}" | xargs)
 
-        DOMAIN_NAME="${domain_env}"
+                # Certs
+                # generate_certs
+                # Nginx
+                nginx_site_conf
+                # Install WP files
+                # install_wordpress_files
 
-        # Reset the environment to default for each domain to ensure a clean state
-        # unset $(grep -v '^#' "${ENV_DIR}/default.env" | sed -E 's/(.*)=.*/\1/' | xargs)
-
-        if [ -f "${ENV_DIR}/default.env" ]; then
-            export $(grep -v '^#' "${ENV_DIR}/default.env" | xargs)
+                # Unset site specific .env variables
+                unset $(grep -v '^#' "${env_file}" | sed -E 's/(.*)=.*/\1/' | xargs)
+            else
+                echo "No .env file found for ${DOMAIN_NAME}."
+            fi
+            unset $(grep -v '^#' "${ROOT_PATH}/.env" | sed -E 's/(.*)=.*/\1/' | xargs)
+            unset DOMAIN_NAME
         fi
-
-        # Load site-specific environment variables, overriding above defaults defaults
-        if [ -f "${ENV_DIR}/${domain_env}.env" ]; then
-            export $(grep -v '^#' "${ENV_DIR}/${domain_env}.env" | xargs)
-        fi
-
-        # Configure site
-        nginx_for_env "${domain_env}"
-
-        # Reset .env
-        unset $(grep -v '^#' "${ENV_DIR}/${domain_env}.env" | sed -E 's/(.*)=.*/\1/' | xargs)
     done
 }
 

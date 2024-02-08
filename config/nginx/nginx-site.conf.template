@@ -1,0 +1,12 @@
+server {
+    listen 80;
+    listen 443 ssl;
+    server_name $DOMAIN_NAME, *.$DOMAIN_NAME;
+
+    root /var/www/html/$DOMAIN_NAME;
+    index index.php index.html index.htm;
+
+    # Includes
+    include /etc/nginx/common/ssl.conf;
+    include /etc/nginx/common/php.conf;
+}

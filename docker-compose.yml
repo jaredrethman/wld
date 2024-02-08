@@ -2,13 +2,14 @@ version: '3.8'
 
 services:
   nginx:
+    build: 
+      context: ./config/nginx
     image: nginx:latest
     ports:
       - "80:80"
       - "443:443"
     volumes:
-      - ./nginx/:/etc/nginx/conf.d:ro
-      - ./ssl/certs:/etc/nginx/ssl/certs:ro
+      - ./config/certs:/etc/nginx/ssl/certs:ro
       - ./sites:/var/www/html
     depends_on:
       - php-8
@@ -18,18 +19,20 @@ services:
 
   php-8:
     image: php:8.0-fpm
+    container_name: php-8
     volumes:
       - ./sites:/var/www/html
     networks:
       - wp-network
-    environment:
-      - FILE_ENV=env/default.env
 
   mariadb:
     image: mariadb:latest
     environment:
-      - MYSQL_ROOT_PASSWORD=rootpassword
-      - MARIADB_ROOT_PASSWORD=rootpassword
+      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD:-password123!}
+      - MARIADB_ROOT_PASSWORD=${MARIADB_ROOT_PASSWORD:-password123!}
+      - MYSQL_USER=${MYSQL_USER:-wpadmin}
+      - MYSQL_PASSWORD=${MYSQL_PASSWORD:-password123!}
+      - MYSQL_ALLOWED_EMPTY_PASSWORD=${MYSQL_ALLOWED_EMPTY_PASSWORD:-no}
     volumes:
       - ./mariadb:/var/lib/mysql
     networks:

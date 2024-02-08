@@ -1,0 +1,4 @@
+const MULTISITE = true;
+const SUBDOMAIN_INSTALL = true;
+const WP_HOME = '$WP_URL';
+const WP_SITEURL = '$WP_URL';
