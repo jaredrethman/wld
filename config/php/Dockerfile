@@ -1,6 +1,6 @@
 FROM php:8.3-fpm-alpine
 
-# RUN touch /var/log/error_log
+RUN touch /var/log/error_log
 
 # ADD ./www.conf /usr/local/etc/php-fpm.d/www.conf
 
