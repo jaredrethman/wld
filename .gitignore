@@ -1,13 +1,5 @@
 mariadb
 # nginx
-certs/*.pem
-
-# wp-content
-sites/*.*/*
-!sites/*.*/wp-content
-!sites/*.*/wp-config.txt
-!sites/*.*/.env
-sites/wp-content/uploads
-
-# config
+config/certs/*.pem
+sites
 config/nginx/sites
