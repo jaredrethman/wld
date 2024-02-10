@@ -1,14 +1,18 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-SCRIPT_PATH="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-ROOT_PATH=$(dirname "${SCRIPT_PATH}")
+source cli/utils.sh
 
-WORDPRESS_VERSION="${WORDPRESS_VERSION:-6.4.2}"
+WORDPRESS_VERSION="${WORDPRESS_VERSION:-latest}"
 WORDPRESS_SITE_PATH="${ROOT_PATH}/sites/${DOMAIN_NAME}"
+# Use parameter expansion to set the variable
+WORDPRESS_ZIP_FILE_NAME="${WORDPRESS_VERSION}"
+
+if [ "$WORDPRESS_VERSION" != "latest" ]; then
+    WORDPRESS_ZIP_FILE_NAME="wordpress-${WORDPRESS_VERSION}"
+fi
 
 # Colors for output
-RED="\033[31m"
 GREEN="\033[32m"
 YELLOW="\033[33m"
 NORMAL="\033[0;39m"
@@ -16,8 +20,8 @@ NORMAL="\033[0;39m"
 # Download and unzip WordPress
 # @TODO Cache specific versions and symlink to relevant sites
 get_wordpress() {
-    curl -s -L https://wordpress.org/wordpress-$WORDPRESS_VERSION.zip -o "${WORDPRESS_SITE_PATH}/wordpress-${WORDPRESS_VERSION}.zip"
-    unzip -qq "${WORDPRESS_SITE_PATH}/wordpress-${WORDPRESS_VERSION}.zip" -d "${WORDPRESS_SITE_PATH}"
+    curl -s -L https://wordpress.org/$WORDPRESS_ZIP_FILE_NAME.zip -o "${WORDPRESS_SITE_PATH}/${WORDPRESS_ZIP_FILE_NAME}.zip"
+    unzip -qq "${WORDPRESS_SITE_PATH}/${WORDPRESS_ZIP_FILE_NAME}.zip" -d "${WORDPRESS_SITE_PATH}"
 }
 
 # Sync downloaded WordPress with version controlled `wp-content`
@@ -38,7 +42,7 @@ configure_wp_config() {
         sed -i '' "s/localhost/${WORDPRESS_DB_HOST}/g" "${WORDPRESS_SITE_PATH}/wp-config_tmp.php"
 
         # Add additional wp-config constants from ./wp-config.txt
-        envsubst < "${WORDPRESS_SITE_PATH}/wp-config.txt" > "${WORDPRESS_SITE_PATH}/wp-config_temp.txt"
+        envsubst <"${WORDPRESS_SITE_PATH}/wp-config.txt" >"${WORDPRESS_SITE_PATH}/wp-config_temp.txt"
         sed -i '' "/\**#@-\*/r ${WORDPRESS_SITE_PATH}/wp-config_temp.txt" "${WORDPRESS_SITE_PATH}/wp-config_tmp.php"
         mv "${WORDPRESS_SITE_PATH}/wp-config_tmp.php" "${WORDPRESS_SITE_PATH}/wp-config.php"
         rm -rf "${WORDPRESS_SITE_PATH}/wp-config_temp.txt"
@@ -48,16 +52,16 @@ configure_wp_config() {
 }
 
 cleanup() {
-    rm -rf "${WORDPRESS_SITE_PATH}/wordpress/" "${WORDPRESS_SITE_PATH}/wordpress-${WORDPRESS_VERSION}.zip"
+    rm -rf "${WORDPRESS_SITE_PATH}/wordpress/" "${WORDPRESS_SITE_PATH}/${WORDPRESS_ZIP_FILE_NAME}.zip"
 }
 
 # Main function
 main() {
-    
+
     if test -f "${WORDPRESS_SITE_PATH}/wp-config.php"; then
-        echo "${YELLOW}\nWordPress exists. Skipping install!\n${NORMAL}"
+        echo "${YELLOW}\nWordPress exists inside \"${WORDPRESS_SITE_PATH}\". Skipping install!\n${NORMAL}"
     else
-        echo "\n🕐 Installing WordPress (v${WORDPRESS_VERSION}), for ${DOMAIN_NAME}"
+        echo "\n🕐 Installing WordPress (${WORDPRESS_VERSION}), for ${DOMAIN_NAME}"
         get_wordpress
         echo "${GREEN}✔ Done!\n${NORMAL}"
         echo "🔄 Syncing WordPress file system..."
