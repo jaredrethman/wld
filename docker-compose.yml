@@ -1,10 +1,13 @@
 version: '3.8'
-
+name: wld
 services:
   nginx:
+    image: nginx:${NGINX_VERSION:-stable-alpine}
     build: 
       context: ./config/nginx
-    image: nginx:latest
+      args:
+        - NGINX_VERSION=${NGINX_VERSION:-stable-alpine}
+    container_name: nginx
     ports:
       - "80:80"
       - "443:443"
@@ -12,21 +15,30 @@ services:
       - ./config/certs:/etc/nginx/ssl/certs:ro
       - ./sites:/var/www/html
     depends_on:
-      - php-8
       - mariadb
+      - php
     networks:
-      - wp-network
+      - wld-network
 
-  php-8:
-    image: php:8.0-fpm
-    container_name: php-8
+  php:
+    image: php:${PHP_FPM_VERSION:-8.3-fpm-alpine}
+    build: 
+      context: ./config/php
+      args:
+        - PHP_FPM_VERSION=${PHP_FPM_VERSION:-8.3-fpm-alpine}
+    container_name: php
     volumes:
       - ./sites:/var/www/html
     networks:
-      - wp-network
+      - wld-network
 
   mariadb:
-    image: mariadb:latest
+    image: mariadb:${MARIADB_VERSION:-10.5}
+    container_name: mariadb
+    build: 
+      context: ./config/mariadb
+      args:
+        - MARIADB_VERSION=${MARIADB_VERSION:-10.5}
     environment:
       - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD:-password123!}
       - MARIADB_ROOT_PASSWORD=${MARIADB_ROOT_PASSWORD:-password123!}
@@ -34,9 +46,15 @@ services:
       - MARIADB_USER=wpadmin
       - MARIADB_PASSWORD=password123!
     volumes:
-      - ./mariadb:/var/lib/mysql
+      - wld_data:/var/lib/mysql
+      - ./sites:/path/to/sites
+    # healthcheck:
+    #   test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-uroot", "-prootpassword"]
+    #   interval: 10s
+    #   timeout: 5s
+    #   retries: 5
     networks:
-      - wp-network
+      - wld-network
 
   phpmyadmin:
     image: phpmyadmin/phpmyadmin
@@ -51,8 +69,11 @@ services:
     depends_on:
       - mariadb
     networks:
-      - wp-network
+      - wld-network
+
+volumes:
+  wld_data: {}
 
 networks:
-  wp-network:
+  wld-network:
     driver: bridge

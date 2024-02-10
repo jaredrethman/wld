@@ -1,8 +1,6 @@
 # Start from the official nginx image
-FROM nginx:latest
-
-# Remove the default nginx configuration files
-RUN rm -f /etc/nginx/conf.d/default.conf
+ARG NGINX_VERSION=stable-alpine
+FROM nginx:${NGINX_VERSION}
 
 # Copy the main nginx configuration file
 COPY ./nginx.conf /etc/nginx/nginx.conf
@@ -11,4 +9,4 @@ COPY ./nginx.conf /etc/nginx/nginx.conf
 COPY ./common /etc/nginx/common
 
 # Copy the site-specific configurations
-COPY ./sites /etc/nginx/conf.d/sites
+COPY ./sites /etc/nginx/conf.d

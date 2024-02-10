@@ -1,4 +1,5 @@
-FROM php:8.3-fpm-alpine
+ARG PHP_FPM_VERSION=8.3-fpm-alpine
+FROM php:${PHP_FPM_VERSION}
 
 RUN touch /var/log/error_log
 
