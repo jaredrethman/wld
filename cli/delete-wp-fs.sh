@@ -9,17 +9,16 @@ SITES_DIR="${ROOT_PATH}/sites"
 main() {
     # Loop through each site directory under the sites directory
     for SITE_DIR in "$SITES_DIR"/*; do
-    # Check if it's a directory
-    if [ -d "$SITE_DIR" ]; then
-        echo "Processing ${SITE_DIR}"
-        # Running the find command to delete all except specified files/directories
-        find "$SITE_DIR" -mindepth 1 | grep -vE "$SITE_DIR/(wp-content|\.env|wp-config.txt)" | while read -r line; do
-            rm -rf "$line"
-        done
-        echo "Processed directory: $SITE_DIR"
-    else
-        echo "${SITE_DIR} is not a directory"
-    fi
+        # Check if it's a directory
+        if [[ -d "$SITE_DIR" ]]; then
+            # Delete files excluding wp-content, .env, wp-config.txt
+            find "$SITE_DIR" -type f ! -path "$SITE_DIR/wp-content/*" ! -name ".env" ! -name ".gitignore" ! -name "wp-config.txt" -exec rm -f {} +
+            rm -rf "${SITE_DIR}/wp-admin"
+            rm -rf "${SITE_DIR}/wp-includes"
+            echo "Deleted WordPress file system for \"$SITE_DIR\""
+        else
+            echo "${SITE_DIR} is not a directory"
+        fi
     done
 }
 
