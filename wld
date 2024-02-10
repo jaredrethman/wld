@@ -1,14 +1,16 @@
 #!/usr/bin/env bash
-set -euo pipefail
+# set -euo pipefail
 
-SCRIPT_PATH="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+source cli/utils.sh
+
+USER_ARGUMENT="${1:-status}"
+ALLOWED_FUNCTIONS=("site" "install" "env" "status" "delete-wp-fs" "scaffold")
 
 # Define function to call other scripts
 call_script() {
-    script_name="$1"
-    # Assuming scripts are in the `scripts` directory
-    script_path="${SCRIPT_PATH}/cli/${script_name}.sh"
-    
+    local script_name="$1"
+    local script_path="${CLI_DIR}/${script_name}.sh"
+
     if [[ -f "$script_path" ]]; then
         bash "$script_path"
     else
@@ -17,11 +19,27 @@ call_script() {
     fi
 }
 
-# Parse arguments
-while [[ "$#" -gt 0 ]]; do
-    case $1 in
-        --run|-r) call_script "$2"; shift ;;
-        *) echo "Unknown parameter: $1"; exit 1 ;;
-    esac
-    shift
-done
+function main() {
+    local func_name="$1"
+    local found=0
+
+    echo "func_name: ${func_name}"
+
+    for name in "${ALLOWED_FUNCTIONS[@]}"; do
+        if [[ "$name" == "$func_name" ]]; then
+            found=1
+            break
+        fi
+    done
+
+    # Step 4: If it does, execute the function. If it doesn't exist, throw an error.
+    if [[ $found -eq 1 ]]; then
+        call_script $func_name
+    else
+        echo "Error: Function '$func_name' not allowed."
+    fi
+}
+
+main "${USER_ARGUMENT}"
+
+exit 0
