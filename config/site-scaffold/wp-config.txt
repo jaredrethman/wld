@@ -1,4 +1,0 @@
-// const MULTISITE = true;
-// const SUBDOMAIN_INSTALL = true;
-// const WP_HOME = '$WORDPRESS_URL';
-// const WP_SITEURL = '$WORDPRESS_URL';

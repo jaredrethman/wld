@@ -34,7 +34,7 @@ fi
 echo "\nGenerating certs for '${DOMAIN_NAME} *.${DOMAIN_NAME}' using OpenSSL"
 
 # Map DOMAIN_NAME to 127.0.0.1 + add to hosts file
-echo "✏ Adding \"127.0.0.1 ${DOMAIN_NAME}\" entry on \"/etc/hosts\"."
+echo "✏ Adding \"127.0.0.1 ${DOMAIN_NAME}\" entry to \"/etc/hosts\"."
 grep -qxF '127.0.0.1 '${DOMAIN_NAME} /etc/hosts || echo "127.0.0.1 ${DOMAIN_NAME}" | sudo tee -a /etc/hosts
 
 # Generate openssl.cnf file with proper SAN entries

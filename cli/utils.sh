@@ -1,3 +1,4 @@
+#!/usr/bin/env bash
 # Variables
 
 ## Directories
@@ -6,11 +7,15 @@ ROOT_PATH=$(dirname "${SCRIPT_PATH}")
 CLI_DIR="${ROOT_PATH}/cli"
 SITES_DIR="${ROOT_PATH}/sites"
 CONFIG_DIR="${ROOT_PATH}/config"
+NGINX_CONFIG_DIR="${ROOT_PATH}/config/nginx"
 ## Text colors
 TEXT_RED="\033[31m"
 TEXT_GREEN="\033[32m"
 TEXT_YELLOW="\033[33m"
 TEXT_COLOR_RESET="\033[0;39m"
+
+## Nginx
+NGINX_TEMPLATE_FILE="./config/nginx/nginx-site.conf.template"
 
 CLEAR_PREV_LINE="\033[1A\033[K"
 
@@ -79,21 +84,76 @@ each_site_env() {
   done
 }
 
-# Function to prompt for a local domain
+# Prompt domain
 prompt_domain_name() {
   local input
   while true; do
-    echo "Please enter a local domain:" >&2
+    printf "Domain name (e.g. \"example.local\"): " >&2
     read input
 
-    # Check if the input is in the SITES array
-    if [[ " ${SITES[@]} " =~ " $input " ]]; then
-      echo "The domain '$input' already exists. Please enter a different domain." >&2
-    else
-      break
+    # Input empty?
+    if [[ -z "$input" ]]; then
+      continue
     fi
+
+    # Domain already exist?
+    if [[ " ${SITES[@]} " =~ " $input " ]]; then
+      printf "The domain '$input' already exists. Please enter a different domain.\n" >&2
+      continue
+    fi
+
+    # Check for spaces in the input
+    if [[ "$input" =~ [[:space:]] ]]; then
+      printf "Spaces are not allowed. Please enter a valid domain.\n" >&2
+      continue
+    fi
+
+    # Does the input resemble a domain?
+    if [[ ! "$input" =~ ^[a-zA-Z0-9]([a-zA-Z0-9\-]{0,61}[a-zA-Z0-9])?(\.[a-zA-Z]{2,})+$ ]]; then
+      printf "Please enter a valid domain e.g. 'example.local'\n" >&2
+      continue
+    fi
+
+    break
   done
 
-  # Return the valid domain
   echo $input
+}
+
+# Prompt inline input
+prompt_inline_input() {
+  local input
+  local prompt="$1"
+  while true; do
+    printf "${prompt}: " >&2
+    read input
+
+    # Input empty?
+    if [[ -z "$input" ]]; then
+      continue
+    fi
+
+    break
+  done
+
+  echo $input
+}
+
+# Prompt y/n
+prompt_inline_yn() {
+  local prompt_message="$1"
+  local default_value="${2-n}"
+  local response
+
+  read -p "$prompt_message [y/N]: " response
+
+  response=${response:-$default_value}
+
+  response=$(echo "$response" | tr '[:upper:]' '[:lower:]')
+
+  if [[ "$response" == "y" ]]; then
+    echo "y"
+  else
+    echo "n"
+  fi
 }

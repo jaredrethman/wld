@@ -9,7 +9,7 @@ WORDPRESS_SITE_PATH="${ROOT_PATH}/sites/${DOMAIN_NAME}"
 WORDPRESS_ZIP_FILE_NAME="${WORDPRESS_VERSION}"
 
 if [ "$WORDPRESS_VERSION" != "latest" ]; then
-    WORDPRESS_ZIP_FILE_NAME="wordpress-${WORDPRESS_VERSION}"
+    WORDPRESS_ZIP_FILE_NAME="wordpress-${WP_LATEST_VERSION}"
 fi
 
 # Colors for output
@@ -42,10 +42,12 @@ configure_wp_config() {
         sed -i '' "s/localhost/${WORDPRESS_DB_HOST}/g" "${WORDPRESS_SITE_PATH}/wp-config_tmp.php"
 
         # Add additional wp-config constants from ./wp-config.txt
-        envsubst <"${WORDPRESS_SITE_PATH}/wp-config.txt" >"${WORDPRESS_SITE_PATH}/wp-config_temp.txt"
-        sed -i '' "/\**#@-\*/r ${WORDPRESS_SITE_PATH}/wp-config_temp.txt" "${WORDPRESS_SITE_PATH}/wp-config_tmp.php"
+        if [ -f "${WORDPRESS_SITE_PATH}/wp-config.txt" ]; then
+            envsubst <"${WORDPRESS_SITE_PATH}/wp-config.txt" >"${WORDPRESS_SITE_PATH}/wp-config_temp.txt"
+            sed -i '' "/\**#@-\*/r ${WORDPRESS_SITE_PATH}/wp-config_temp.txt" "${WORDPRESS_SITE_PATH}/wp-config_tmp.php"
+            rm -rf "${WORDPRESS_SITE_PATH}/wp-config_temp.txt"
+        fi
         mv "${WORDPRESS_SITE_PATH}/wp-config_tmp.php" "${WORDPRESS_SITE_PATH}/wp-config.php"
-        rm -rf "${WORDPRESS_SITE_PATH}/wp-config_temp.txt"
     else
         echo "  - ${YELLOW}wp-config-sample.php not found!${NORMAL}"
     fi

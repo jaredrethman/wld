@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-set -euo pipefail
+# set -euo pipefail
 
 SCRIPT_PATH="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 ROOT_PATH=$(dirname "${SCRIPT_PATH}")
@@ -13,7 +13,7 @@ nginx_site_conf() {
 }
 
 install_wordpress_files() {
-    sh "${ROOT_PATH}/cli/install.sh"
+    sh "${ROOT_PATH}/cli/install-wp-fs.sh"
 }
 
 generate_certs() {
@@ -37,7 +37,7 @@ main() {
                 # Nginx
                 # nginx_site_conf
                 # Install WP files
-                # install_wordpress_files
+                install_wordpress_files
                 echo "Hey"
 
                 # Unset site specific .env variables

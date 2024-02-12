@@ -9,4 +9,4 @@ COPY ./nginx.conf /etc/nginx/nginx.conf
 COPY ./common /etc/nginx/common
 
 # Copy the site-specific configurations
-COPY ./sites /etc/nginx/conf.d
+# COPY ./sites /etc/nginx/conf.d

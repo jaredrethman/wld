@@ -4,6 +4,8 @@ source cli/utils.sh
 
 NGINX_CONFIG_DIR="./config/nginx/sites"
 TEMPLATE_FILE="./config/nginx/nginx-site.conf.template"
+# Get latest WordPress version
+export WP_LATEST_VERSION=$(curl -s https://api.wordpress.org/core/version-check/1.7/ | grep -o '"version":"[^"]*' | head -1 | awk -F '"' '{print $4}')
 
 nginx_site_conf() {
     envsubst '${DOMAIN_NAME}' <"$TEMPLATE_FILE" >"${NGINX_CONFIG_DIR}/${DOMAIN_NAME}.conf"
