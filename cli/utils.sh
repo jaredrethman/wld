@@ -8,11 +8,16 @@ CLI_DIR="${ROOT_PATH}/cli"
 SITES_DIR="${ROOT_PATH}/sites"
 CONFIG_DIR="${ROOT_PATH}/config"
 NGINX_CONFIG_DIR="${ROOT_PATH}/config/nginx"
-## Text colors
-TEXT_RED="\033[31m"
-TEXT_GREEN="\033[32m"
-TEXT_YELLOW="\033[33m"
-TEXT_COLOR_RESET="\033[0;39m"
+## Text
+TEXT_BOLD="\e[1m"
+### Colors
+TEXT_COLOR_GRAY="\e[30m"
+TEXT_COLOR_RED="\e[31m"
+TEXT_COLOR_GREEN="\e[32m"
+TEXT_COLOR_YELLOW="\e[33m"
+TEXT_COLOR_BLUE="\e[34m"
+TEXT_COLOR_BLUE_BOLD="\e[34;1m"
+TEXT_COLOR_RESET="\e[0m"
 
 ## Nginx
 NGINX_TEMPLATE_FILE="./config/nginx/nginx-site.conf.template"
@@ -20,6 +25,11 @@ NGINX_TEMPLATE_FILE="./config/nginx/nginx-site.conf.template"
 CLEAR_PREV_LINE="\033[1A\033[K"
 
 SITES=($(find "$SITES_DIR" -mindepth 1 -maxdepth 1 -type d -exec basename {} \;))
+
+get_wp_latest_version() {
+  wp_latest_version=$(curl -s https://api.wordpress.org/core/version-check/1.7/ | grep -o '"version":"[^"]*' | head -1 | awk -F '"' '{print $4}')
+  echo $wp_latest_version
+}
 
 # Functions
 
@@ -124,12 +134,18 @@ prompt_domain_name() {
 prompt_inline_input() {
   local input
   local prompt="$1"
+  local default_value="${2-0}"
   while true; do
     printf "${prompt}: " >&2
     read input
 
     # Input empty?
     if [[ -z "$input" ]]; then
+      if [[ -n "$default_value" && "$default_value" != '0' ]]; then
+        printf "${CLEAR_PREV_LINE}""${prompt}: ${default_value}\n" >&2
+        input="$default_value"
+        break
+      fi
       continue
     fi
 
