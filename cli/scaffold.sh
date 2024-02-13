@@ -9,7 +9,7 @@ IS_MULTISITE="n"
 NGINX_TEMPLATE_FILE="${NGINX_CONFIG_DIR}/nginx-site.conf.template"
 
 set_install_details() {
-    local can_install=n
+    local can_install="n"
     ### Prompt - start
     DOMAIN_NAME=$(prompt_domain_name)
     # Override .env vars
@@ -21,14 +21,14 @@ set_install_details() {
     IS_MULTISITE=$(prompt_inline_yn "Multisite (default: n)")
     ### Prompt - end
     printf "${CLEAR_PREV_LINE}${CLEAR_PREV_LINE}${CLEAR_PREV_LINE}${CLEAR_PREV_LINE}${CLEAR_PREV_LINE}${CLEAR_PREV_LINE}${CLEAR_PREV_LINE}"
-    printf "\n${TEXT_COLOR_BLUE_BOLD}Install details:${TEXT_COLOR_RESET}\n"
-    printf " · ${TEXT_COLOR_GRAY}Title:${TEXT_COLOR_RESET} %s\n" "${WORDPRESS_SITE_TITLE}"
-    printf " · ${TEXT_COLOR_GRAY}Domain:${TEXT_COLOR_RESET} %s\n" "${DOMAIN_NAME}"
-    printf " · ${TEXT_COLOR_GRAY}WP Version:${TEXT_COLOR_RESET} %s\n" "${WORDPRESS_VERSION}"
-    printf " · ${TEXT_COLOR_GRAY}Multisite:${TEXT_COLOR_RESET} %s\n" "${IS_MULTISITE}"
-    printf " · ${TEXT_COLOR_GRAY}User:${TEXT_COLOR_RESET} %s\n" "${WORDPRESS_ADMIN_USER}"
-    printf " · ${TEXT_COLOR_GRAY}Email:${TEXT_COLOR_RESET} %s\n" "${WORDPRESS_ADMIN_EMAIL}"
-    printf " · ${TEXT_COLOR_GRAY}Password:${TEXT_COLOR_RESET} %s\n\n" "${WORDPRESS_ADMIN_PASSWORD}"
+    printf "\n${TEXT_COLOR_BLUE_BOLD}Install details:${TEXT_REST}\n"
+    printf " · ${TEXT_COLOR_GRAY}Title:${TEXT_REST} %s\n" "${WORDPRESS_SITE_TITLE}"
+    printf " · ${TEXT_COLOR_GRAY}Domain:${TEXT_REST} %s\n" "${DOMAIN_NAME}"
+    printf " · ${TEXT_COLOR_GRAY}WP Version:${TEXT_REST} %s\n" "${WORDPRESS_VERSION}"
+    printf " · ${TEXT_COLOR_GRAY}Multisite:${TEXT_REST} %s\n" "${IS_MULTISITE}"
+    printf " · ${TEXT_COLOR_GRAY}User:${TEXT_REST} %s\n" "${WORDPRESS_ADMIN_USER}"
+    printf " · ${TEXT_COLOR_GRAY}Email:${TEXT_REST} %s\n" "${WORDPRESS_ADMIN_EMAIL}"
+    printf " · ${TEXT_COLOR_GRAY}Password:${TEXT_REST} %s\n\n" "${WORDPRESS_ADMIN_PASSWORD}"
     can_install=$(prompt_inline_yn "Continue with install")
 
     if [[ "$can_install" != "y" ]]; then

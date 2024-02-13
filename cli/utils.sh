@@ -17,7 +17,7 @@ TEXT_COLOR_GREEN="\e[32m"
 TEXT_COLOR_YELLOW="\e[33m"
 TEXT_COLOR_BLUE="\e[34m"
 TEXT_COLOR_BLUE_BOLD="\e[34;1m"
-TEXT_COLOR_RESET="\e[0m"
+TEXT_REST="\e[0m"
 
 ## Nginx
 NGINX_TEMPLATE_FILE="./config/nginx/nginx-site.conf.template"
