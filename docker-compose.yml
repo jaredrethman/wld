@@ -44,16 +44,11 @@ services:
       - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD:-password123!}
       - MARIADB_ROOT_PASSWORD=${MARIADB_ROOT_PASSWORD:-password123!}
       - MYSQL_ALLOWED_EMPTY_PASSWORD=${MYSQL_ALLOWED_EMPTY_PASSWORD:-no}
-      - MARIADB_USER=wpadmin
-      - MARIADB_PASSWORD=password123!
+      - MARIADB_USER=${MARIADB_USER:-wpadmin}
+      - MARIADB_PASSWORD=${MARIADB_PASSWORD:-password123!}
     volumes:
       - wld_data:/var/lib/mysql
       - ./sites:/path/to/sites
-    # healthcheck:
-    #   test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-uroot", "-prootpassword"]
-    #   interval: 10s
-    #   timeout: 5s
-    #   retries: 5
     networks:
       - wld-network
 
