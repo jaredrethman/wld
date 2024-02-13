@@ -24,7 +24,15 @@ NGINX_TEMPLATE_FILE="./config/nginx/nginx-site.conf.template"
 
 CLEAR_PREV_LINE="\033[1A\033[K"
 
-SITES=($(find "$SITES_DIR" -mindepth 1 -maxdepth 1 -type d -exec basename {} \;))
+SITES=$(find "$SITES_DIR" -mindepth 1 -maxdepth 1 -type d -exec basename {} \; | xargs)
+
+site_exists() {
+  if [[ " ${SITES[@]} " =~ " $1 " ]]; then
+    echo 1
+    return
+  fi
+  echo 0
+}
 
 get_wp_latest_version() {
   wp_latest_version=$(curl -s https://api.wordpress.org/core/version-check/1.7/ | grep -o '"version":"[^"]*' | head -1 | awk -F '"' '{print $4}')
@@ -35,7 +43,7 @@ get_wp_latest_version() {
 
 reset_loading_animation() {
   local pid="$1"
-  local reset_txt="${2:-Done}"
+  local reset_txt="${2:-''}"
   kill $pid
   wait $pid 2>/dev/null
   printf "${CLEAR_PREV_LINE}"
