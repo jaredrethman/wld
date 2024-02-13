@@ -3,16 +3,19 @@
 
 source cli/utils.sh
 
-USER_ARGUMENT="${1:-status}"
-ALLOWED_FUNCTIONS=("site" "install" "env" "status" "delete-wp-fs" "scaffold")
+# FUNCTION_NAME="${1:-status}"
+# shift
+# FUNCTION_ARGUMENTS="$@"
+ALLOWED_FUNCTIONS=("scaffold" "site" "sites")
 
 # Define function to call other scripts
 call_script() {
-    local script_name="$1"
-    local script_path="${CLI_DIR}/${script_name}.sh"
+    local func_name="$1"
+    shift
+    local script_path="${CLI_DIR}/${func_name}.sh"
 
     if [[ -f "$script_path" ]]; then
-        bash "$script_path"
+        bash "$script_path" "$@"
     else
         echo "Script does not exist: $script_name"
         exit 1
@@ -32,12 +35,12 @@ function main() {
 
     # Step 4: If it does, execute the function. If it doesn't exist, throw an error.
     if [[ $found -eq 1 ]]; then
-        call_script $func_name
+        call_script "$@"
     else
         echo "Error: Function '$func_name' not allowed."
     fi
 }
 
-main "${USER_ARGUMENT}"
+main "$@"
 
 exit 0
