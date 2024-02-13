@@ -10,17 +10,8 @@ Yes, just another WordPress ~~Site~~ Local Docker environment. I wanted to creat
 - Docker: https://docs.docker.com/get-docker/
 - Docker Compose: https://docs.docker.com/compose/install/
 
-## Installation
-
-1. **Clone the Repository**
-
-```bash
-git clone https://github.com/jaredrethman/wld.git
-cd wld
-```
-
 ## Scaffold a site
-
+Once you've cloned this repo, `cd` into it and scaffold a site.
 ```bash
 sh wld scaffold
 ```
@@ -28,3 +19,8 @@ Answer prompts and/or hit enter/return to select defaults. Once you've responded
 
 ![WLD Scaffold](/docs/scaffold.png "WLD Scaffold")
 
+If you're happy with the details, respond with `y`. This will:
+* Create a local file system inside `./sites` using the domain you specified.
+* Generate necessary certs, macOS or mkcert required.
+* Generate site specific Nginx conf.
+* Build docker-compose or restart the nginx container.
