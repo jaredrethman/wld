@@ -6,7 +6,9 @@ source cli/utils.sh
 # FUNCTION_NAME="${1:-status}"
 # shift
 # FUNCTION_ARGUMENTS="$@"
-ALLOWED_FUNCTIONS=("scaffold" "site" "sites")
+ALLOWED_FUNCTIONS=("scaffold" "site" "sites" "status")
+
+CMD_ARGUMENTS=("$@")
 
 # Define function to call other scripts
 call_script() {
@@ -33,9 +35,29 @@ function main() {
         fi
     done
 
+    # Parse args
+    #!/bin/bash
+
+    while [[ "$#" -gt 0 ]]; do
+        case $1 in
+        --site | -s)
+            echo "You've hit the site option!"
+            ;;
+        --help | -h)
+            echo "Here's a helping hand, just like asking a local for directions."
+            ;;
+        # *)
+        #     echo ""
+        #     ;;
+        esac
+        shift
+    done
+
+    set -- "${CMD_ARGUMENTS[@]}"
+
     # Step 4: If it does, execute the function. If it doesn't exist, throw an error.
     if [[ $found -eq 1 ]]; then
-        call_script "$@"
+        call_script "$CMD_ARGUMENTS"
     else
         echo "Error: Function '$func_name' not allowed."
     fi
