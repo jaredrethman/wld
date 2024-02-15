@@ -1,4 +1,6 @@
 mariadb
+shared
+custom
 # nginx
 config/certs/*.pem
 sites
