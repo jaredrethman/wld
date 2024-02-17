@@ -25,7 +25,8 @@ services:
   php:
     image: php:${PHP_FPM_VERSION:-8.3-fpm-alpine}
     build: 
-      context: ./config/php
+      context: .
+      dockerfile: config/php/Dockerfile
       args:
         - PHP_FPM_VERSION=${PHP_FPM_VERSION:-8.3-fpm-alpine}
     container_name: php
