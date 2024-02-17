@@ -3,7 +3,15 @@ FROM php:${PHP_FPM_VERSION}
 
 RUN touch /var/log/error_log
 
-RUN docker-php-ext-install mysqli pdo pdo_mysql && docker-php-ext-enable pdo_mysql
+# Update package index and install dependencies
+RUN apk update \
+    && apk add --no-cache --virtual .build-deps $PHPIZE_DEPS linux-headers \
+    && pecl install xdebug \
+    && docker-php-ext-enable xdebug \
+    && apk del .build-deps
+
+RUN docker-php-ext-install mysqli pdo pdo_mysql 
+RUN docker-php-ext-enable pdo_mysql
 
 # Necessary to allow inter site cURL/HTTP requests over https
 COPY ./config/certs/*.crt /usr/local/share/ca-certificates/
