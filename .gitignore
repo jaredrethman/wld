@@ -1,7 +1,10 @@
 mariadb
 shared
 custom
-# nginx
-config/certs/*.pem
+cli/docker
+# Certs
+config/certs/*.crt
+config/certs/*.key
+
 sites
 config/nginx/sites
