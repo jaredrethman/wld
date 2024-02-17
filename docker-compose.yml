@@ -52,21 +52,6 @@ services:
     networks:
       - wld-network
 
-  phpmyadmin:
-    image: phpmyadmin/phpmyadmin
-    container_name: phpmyadmin
-    environment:
-      PMA_HOST: mariadb
-      PMA_PORT: 3306
-      PMA_ARBITRARY: 1
-    restart: always
-    ports:
-      - "8080:80"
-    depends_on:
-      - mariadb
-    networks:
-      - wld-network
-
 volumes:
   wld_data: {}
 
