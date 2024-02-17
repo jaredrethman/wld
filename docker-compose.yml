@@ -29,6 +29,7 @@ services:
         - PHP_FPM_VERSION=${PHP_FPM_VERSION:-8.3-fpm-alpine}
     container_name: php
     volumes:
+      - ./config/certs:/etc/ssl/certs/
       - ./sites:/var/www/html
     networks:
       - wld-network
