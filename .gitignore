@@ -1,5 +1,11 @@
-mariadb
-# nginx
-config/certs/*.pem
+.vscode
+shared
+custom
+config/php/cli/*
+!config/php/cli/after-startup.sh
+# Certs
+config/certs/*.crt
+config/certs/*.key
+
 sites
 config/nginx/sites

@@ -2,7 +2,6 @@ version: '3.8'
 name: wld
 services:
   nginx:
-    image: nginx:${NGINX_VERSION:-stable-alpine}
     build: 
       context: ./config/nginx
       args:
@@ -22,7 +21,6 @@ services:
       - wld-network
 
   php:
-    image: php:${PHP_FPM_VERSION:-8.3-fpm-alpine}
     build: 
       context: ./config/php
       args:
@@ -30,11 +28,11 @@ services:
     container_name: php
     volumes:
       - ./sites:/var/www/html
+    command: ["/bin/sh", "-c", "/wld/after-startup.sh"]
     networks:
       - wld-network
 
   mariadb:
-    image: mariadb:${MARIADB_VERSION:-10.5}
     container_name: mariadb
     build: 
       context: ./config/mariadb
@@ -48,22 +46,8 @@ services:
       - MARIADB_PASSWORD=${MARIADB_PASSWORD:-password123!}
     volumes:
       - wld_data:/var/lib/mysql
-      - ./sites:/path/to/sites
-    networks:
-      - wld-network
-
-  phpmyadmin:
-    image: phpmyadmin/phpmyadmin
-    container_name: phpmyadmin
-    environment:
-      PMA_HOST: mariadb
-      PMA_PORT: 3306
-      PMA_ARBITRARY: 1
-    restart: always
-    ports:
-      - "8080:80"
-    depends_on:
-      - mariadb
+      # @TODO replace with site .cache
+      - ./sites:/sites
     networks:
       - wld-network
 

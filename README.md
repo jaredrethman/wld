@@ -60,7 +60,7 @@ VS.
 docker-compose exec php wp user list --allow-root --path="/var/www/html/test.local"
 ```
 
-### Restrictions:
+### Beware:
 * Only subdomain Multisite is supported in `wld scaffold`
 * Cert generation can only be done on macOS or if [mkcert](https://github.com/FiloSottile/mkcert) is installed
 * All WordPress sites run on the same Nginx/PHP services. This might change in the future i.e. different PHP/Nginx versions per/site. This is technically possible, but would require manual intervention and remove ablity to stay in sync with this code base.
