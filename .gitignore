@@ -1,7 +1,8 @@
-mariadb
+.vscode
 shared
 custom
-cli/docker
+cli/docker/*
+!cli/docker/entrypoint.sh
 # Certs
 config/certs/*.crt
 config/certs/*.key
