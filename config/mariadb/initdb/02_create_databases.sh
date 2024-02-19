@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # On Start Up - Create databases for each site that exists in ./sites
-for site in /path/to/sites/*; do
+for site in /sites/*; do
     DB_NAME=$(basename "$site")
     ENV_FILE="${site}/.env"
 

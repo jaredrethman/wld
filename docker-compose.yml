@@ -2,7 +2,6 @@ version: '3.8'
 name: wld
 services:
   nginx:
-    image: nginx:${NGINX_VERSION:-stable-alpine}
     build: 
       context: ./config/nginx
       args:
@@ -14,7 +13,6 @@ services:
     volumes:
       - ./config/certs:/etc/nginx/ssl/certs:ro
       - ./sites:/var/www/html
-      - ./shared/repos:/var/www/html/shared
       - ./config/nginx/sites:/etc/nginx/conf.d
     depends_on:
       - mariadb
@@ -23,21 +21,18 @@ services:
       - wld-network
 
   php:
-    image: php:${PHP_FPM_VERSION:-8.3-fpm-alpine}
     build: 
-      context: .
-      dockerfile: config/php/Dockerfile
+      context: ./config/php
       args:
         - PHP_FPM_VERSION=${PHP_FPM_VERSION:-8.3-fpm-alpine}
     container_name: php
     volumes:
-      - ./config/certs:/etc/ssl/certs/
       - ./sites:/var/www/html
+    command: ["/bin/sh", "-c", "/wld/after-startup.sh"]
     networks:
       - wld-network
 
   mariadb:
-    image: mariadb:${MARIADB_VERSION:-10.5}
     container_name: mariadb
     build: 
       context: ./config/mariadb
@@ -51,7 +46,8 @@ services:
       - MARIADB_PASSWORD=${MARIADB_PASSWORD:-password123!}
     volumes:
       - wld_data:/var/lib/mysql
-      - ./sites:/path/to/sites
+      # @TODO replace with site .cache
+      - ./sites:/sites
     networks:
       - wld-network
 

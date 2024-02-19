@@ -1,8 +1,8 @@
 .vscode
 shared
 custom
-cli/docker/*
-!cli/docker/entrypoint.sh
+config/php/cli/*
+!config/php/cli/after-startup.sh
 # Certs
 config/certs/*.crt
 config/certs/*.key
