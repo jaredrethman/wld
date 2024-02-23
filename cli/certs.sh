@@ -1,10 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-SCRIPT_PATH="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-ROOT_PATH=$(dirname "${SCRIPT_PATH}")
-
-CERTS_DIR="${ROOT_PATH}/config/certs"
+CERTS_DIR="${WLD_DIR}/config/certs"
 
 # Check for mkcert and generate certificates
 if command -v mkcert &> /dev/null; then

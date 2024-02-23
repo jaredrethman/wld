@@ -7,11 +7,11 @@ nginx_site_conf() {
 }
 
 install_wordpress_files() {
-    sh "${ROOT_PATH}/cli/install-wp-fs.sh"
+    sh "${WLD_DIR}/cli/install-wp-fs.sh"
 }
 
 generate_certs() {
-    sh "${ROOT_PATH}/cli/certs.sh"
+    sh "${WLD_DIR}/cli/certs.sh"
 }
 
 main() {

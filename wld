@@ -2,11 +2,11 @@
 # set -euo pipefail
 
 # Make script location the source of the project
-export ROOT_PATH="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+export WLD_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 
 # Load and export all 
 set -a
-source "${ROOT_PATH}/cli/utils.sh"
+source "${WLD_DIR}/cli/utils.sh"
 set +a
 
 ALLOWED_FUNCTIONS=("scaffold" "site" "sites" "status")
