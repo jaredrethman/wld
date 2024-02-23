@@ -1,9 +1,7 @@
 #!/usr/bin/env bash
-# Variables
 
+# Variables
 ## Directories
-SCRIPT_PATH="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-ROOT_PATH=$(dirname "${SCRIPT_PATH}")
 CLI_DIR="${ROOT_PATH}/cli"
 SITES_DIR="${ROOT_PATH}/sites"
 CONFIG_DIR="${ROOT_PATH}/config"
