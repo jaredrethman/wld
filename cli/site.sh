@@ -1,8 +1,6 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-source cli/utils.sh
-
 CMD_PATTERN="${TEXT_BOLD}wld site example.local -- wp ...${TEXT_REST}"
 
 # Main function

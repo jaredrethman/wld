@@ -1,5 +1,4 @@
 #!/bin/sh
-set -eux
 
 php-fpm &
 
@@ -7,7 +6,7 @@ php-fpm &
 # required for communication with services bound to the host's loopback interface
 for SITE_DIR in "/var/www/html"/*; do
     domain_name=$(basename "${SITE_DIR}")
-    echo "$(getent hosts host.docker.internal | awk '{ print $1 }') $domain_name" >> /etc/hosts
+    echo "$(getent hosts host.docker.internal | awk '{ print $1 }') ${domain_name}" >> /etc/hosts
 done
 
 for file in "/wld/"*; do

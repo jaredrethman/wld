@@ -6,8 +6,8 @@ RUN touch /var/log/error_log
 # Update package index and install dependencies
 RUN apk update \
     && apk add --no-cache --virtual .build-deps $PHPIZE_DEPS linux-headers \
-    # && pecl install xdebug \
-    # && docker-php-ext-enable xdebug \
+    && pecl install xdebug \
+    && docker-php-ext-enable xdebug \
     && apk del .build-deps
 
 RUN docker-php-ext-install mysqli pdo pdo_mysql 
@@ -18,7 +18,7 @@ RUN docker-php-ext-enable pdo_mysql
 
 COPY 10-error-reporting.ini \
     20-memory-limit.ini \
-    # 40-xdebug.ini \
+    40-xdebug.ini \
     ${PHP_INI_DIR}/conf.d/
 
 # WP CLI

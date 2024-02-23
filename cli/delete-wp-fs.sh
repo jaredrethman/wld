@@ -1,9 +1,6 @@
 #!/usr/bin/env bash
 
-SCRIPT_PATH="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-ROOT_PATH=$(dirname "${SCRIPT_PATH}")
-
-SITES_DIR="${ROOT_PATH}/sites"
+SITES_DIR="${WLD_DIR}/sites"
 
 # Main function
 main() {

@@ -1,10 +1,8 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-source cli/utils.sh
-
 WORDPRESS_VERSION="${WORDPRESS_VERSION:-latest}"
-WORDPRESS_SITE_PATH="${ROOT_PATH}/sites/${DOMAIN_NAME}"
+WORDPRESS_SITE_PATH="${WLD_DIR}/sites/${DOMAIN_NAME}"
 # Use parameter expansion to set the variable
 WORDPRESS_ZIP_FILE_NAME="${WORDPRESS_VERSION}"
 

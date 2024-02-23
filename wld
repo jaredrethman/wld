@@ -1,11 +1,14 @@
 #!/usr/bin/env bash
 # set -euo pipefail
 
-source cli/utils.sh
+# Make script location the source of the project
+export WLD_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 
-# FUNCTION_NAME="${1:-status}"
-# shift
-# FUNCTION_ARGUMENTS="$@"
+# Load and export all 
+set -a
+source "${WLD_DIR}/cli/utils.sh"
+set +a
+
 ALLOWED_FUNCTIONS=("scaffold" "site" "sites" "status")
 
 CMD_ARGUMENTS=("$@")

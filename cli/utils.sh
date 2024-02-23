@@ -1,13 +1,11 @@
 #!/usr/bin/env bash
-# Variables
 
+# Variables
 ## Directories
-SCRIPT_PATH="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-ROOT_PATH=$(dirname "${SCRIPT_PATH}")
-CLI_DIR="${ROOT_PATH}/cli"
-SITES_DIR="${ROOT_PATH}/sites"
-CONFIG_DIR="${ROOT_PATH}/config"
-NGINX_CONFIG_DIR="${ROOT_PATH}/config/nginx"
+CLI_DIR="${WLD_DIR}/cli"
+SITES_DIR="${WLD_DIR}/sites"
+CONFIG_DIR="${WLD_DIR}/config"
+NGINX_CONFIG_DIR="${WLD_DIR}/config/nginx"
 ## Text
 TEXT_BOLD="\e[1m"
 ### Colors
@@ -17,7 +15,7 @@ TEXT_COLOR_GREEN="\e[32m"
 TEXT_COLOR_YELLOW="\e[33m"
 TEXT_COLOR_BLUE="\e[34m"
 TEXT_COLOR_BLUE_BOLD="\e[34;1m"
-TEXT_REST="\e[0m"
+TEXT_STYLE_RESET="\e[0m"
 
 ## Nginx
 NGINX_TEMPLATE_FILE="./config/nginx/nginx-site.conf.template"
@@ -82,7 +80,7 @@ each_site_env() {
   for SITE_DIR in "${SITES_DIR}"/*; do
     if [ -d "${SITE_DIR}" ]; then
       # Set default .env vars as base for environment variables
-      export $(grep -v '^#' "${ROOT_PATH}/.env" | xargs)
+      export $(grep -v '^#' "${WLD_DIR}/.env" | xargs)
       export DOMAIN_NAME=$(basename "${SITE_DIR}")
       env_file="${SITES_DIR}/${DOMAIN_NAME}/.env"
       if [ -f "${env_file}" ]; then
@@ -96,7 +94,7 @@ each_site_env() {
       else
         echo "No .env file found for ${env_file}."
       fi
-      unset $(grep -v '^#' "${ROOT_PATH}/.env" | sed -E 's/(.*)=.*/\1/' | xargs)
+      unset $(grep -v '^#' "${WLD_DIR}/.env" | sed -E 's/(.*)=.*/\1/' | xargs)
       unset DOMAIN_NAME
     fi
   done
