@@ -5,7 +5,7 @@ services:
     build: 
       context: ./config/nginx
       args:
-        - NGINX_VERSION=${NGINX_VERSION:-stable-alpine}
+        - NGINX_VERSION=${NGINX_VERSION}
     container_name: nginx
     ports:
       - "80:80"
@@ -24,11 +24,16 @@ services:
     build: 
       context: ./config/php
       args:
-        - PHP_FPM_VERSION=${PHP_FPM_VERSION:-8.3-fpm-alpine}
+        - PHP_FPM_VERSION=${PHP_FPM_VERSION}
     container_name: php
     volumes:
       - ./sites:/var/www/html
     command: ["/bin/sh", "-c", "/wld/after-startup.sh"]
+    links: 
+      - mariadb
+      - redis
+    # env_file:
+    #   - ./.env
     networks:
       - wld-network
 
@@ -37,7 +42,7 @@ services:
     build: 
       context: ./config/mariadb
       args:
-        - MARIADB_VERSION=${MARIADB_VERSION:-10.5}
+        - MARIADB_VERSION=${MARIADB_VERSION}
     environment:
       - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD:-password123!}
       - MARIADB_ROOT_PASSWORD=${MARIADB_ROOT_PASSWORD:-password123!}
@@ -51,8 +56,31 @@ services:
     networks:
       - wld-network
 
+  redis:
+    image: redis:${REDIS_VERSION}
+    container_name: redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    command: redis-server --requirepass root
+    networks:
+      - wld-network
+
+  adminer:
+    container_name: adminer
+    image: adminer
+    depends_on:
+      - mariadb
+    restart: always
+    ports:
+      - 8081:8080
+    networks:
+      - wld-network
+
 volumes:
-  wld_data: {}
+  wld_data:
+  redis_data:
 
 networks:
   wld-network:
