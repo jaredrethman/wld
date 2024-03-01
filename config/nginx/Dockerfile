@@ -1,5 +1,5 @@
 # Start from the official nginx image
-ARG NGINX_VERSION=stable-alpine
+ARG NGINX_VERSION
 FROM nginx:${NGINX_VERSION}
 
 # Copy the main nginx configuration file

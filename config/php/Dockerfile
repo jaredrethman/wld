@@ -1,21 +1,21 @@
-ARG PHP_FPM_VERSION=8.3-fpm-alpine
+ARG PHP_FPM_VERSION
 FROM php:${PHP_FPM_VERSION}
 
 RUN touch /var/log/error_log
 
-# Update package index and install dependencies
+# Xdebug, Redis
 RUN apk update \
     && apk add --no-cache --virtual .build-deps $PHPIZE_DEPS linux-headers \
     && pecl install xdebug \
     && docker-php-ext-enable xdebug \
+    && pecl install redis \
+    && docker-php-ext-enable redis \
     && apk del .build-deps
 
 RUN docker-php-ext-install mysqli pdo pdo_mysql 
 RUN docker-php-ext-enable pdo_mysql
 
-# COPY ./config/certs/*.crt /usr/local/share/ca-certificates/
-# RUN update-ca-certificates
-
+# ini config
 COPY 10-error-reporting.ini \
     20-memory-limit.ini \
     40-xdebug.ini \
