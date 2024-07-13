@@ -1,4 +1,3 @@
-version: '3.8'
 name: wld
 services:
   nginx:
@@ -29,6 +28,9 @@ services:
     volumes:
       - ./sites:/var/www/html
     command: ["/bin/sh", "-c", "/wld/after-startup.sh"]
+    links: 
+      - mariadb
+      - redis
     networks:
       - wld-network
 

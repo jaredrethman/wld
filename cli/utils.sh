@@ -5,6 +5,7 @@
 CLI_DIR="${WLD_DIR}/cli"
 SITES_DIR="${WLD_DIR}/sites"
 CONFIG_DIR="${WLD_DIR}/config"
+CERTS_CONFIG_DIR="${WLD_DIR}/config/certs"
 NGINX_CONFIG_DIR="${WLD_DIR}/config/nginx"
 ## Text
 TEXT_BOLD="\e[1m"

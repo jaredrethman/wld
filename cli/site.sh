@@ -23,7 +23,7 @@ main() {
     shift
     shift
 
-    docker-compose exec php wp "$@" --path="/var/www/html/${domain_name}" --allow-root
+    docker compose exec php wp "$@" --path="/var/www/html/${domain_name}" --allow-root
 }
 
 # Execute main function

@@ -5,9 +5,12 @@ RUN touch /var/log/error_log
 
 # Update package index and install dependencies
 RUN apk update \
-    && apk add --no-cache --virtual .build-deps $PHPIZE_DEPS linux-headers \
+    && apk add --no-cache --virtual .build-deps $PHPIZE_DEPS linux-headers libxml2-dev \
     && pecl install xdebug \
     && docker-php-ext-enable xdebug \
+    && pecl install redis \
+    && docker-php-ext-enable redis \
+    && docker-php-ext-install soap \
     && apk del .build-deps
 
 RUN docker-php-ext-install mysqli pdo pdo_mysql 

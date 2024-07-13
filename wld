@@ -9,9 +9,36 @@ set -a
 source "${WLD_DIR}/cli/utils.sh"
 set +a
 
-ALLOWED_FUNCTIONS=("scaffold" "site" "sites" "status")
+ALLOWED_FUNCTIONS=("scaffold" "site" "sites" "status" "rm")
 
 CMD_ARGUMENTS=("$@")
+
+parse_flags() {
+    while [[ "$#" -gt 0 ]]; do
+        case $1 in
+        -s=* | --site=*)
+            # Extract the value by removing the '-s=' or '--site=' part
+            site="${1#*=}"
+            echo "Site option selected with value: $site"
+            ;;
+        -h | --help)
+            echo "Displaying help!"
+            ;;
+        *)
+            if [[ "$1" == *"="* ]]; then
+                key="${1%%=*}"
+                value="${1#*=}"
+                echo "Parsed key-value pair: $key=$value"
+            # else
+            #     echo "Unknown option or missing value for: $1"
+            fi
+            ;;
+        esac
+        shift # Move to the next argument
+    done
+
+    set -- "${CMD_ARGUMENTS[@]}"
+}
 
 # Define function to call other scripts
 call_script() {
@@ -38,29 +65,10 @@ function main() {
         fi
     done
 
-    # Parse args
-    #!/bin/bash
+    parse_flags "$@"
 
-    while [[ "$#" -gt 0 ]]; do
-        case $1 in
-        --site | -s)
-            echo "You've hit the site option!"
-            ;;
-        --help | -h)
-            echo "Here's a helping hand, just like asking a local for directions."
-            ;;
-        # *)
-        #     echo ""
-        #     ;;
-        esac
-        shift
-    done
-
-    set -- "${CMD_ARGUMENTS[@]}"
-
-    # Step 4: If it does, execute the function. If it doesn't exist, throw an error.
     if [[ $found -eq 1 ]]; then
-        call_script "$CMD_ARGUMENTS"
+        call_script "$@"
     else
         echo "Error: Function '$func_name' not allowed."
     fi
@@ -69,3 +77,8 @@ function main() {
 main "$@"
 
 exit 0
+
+# ~/
+# wld wp user list --site=dspoke.local
+# ./wld/sites/dspoke.local
+# wld wp user list
