@@ -48,7 +48,6 @@ services:
       - MARIADB_PASSWORD=${MARIADB_PASSWORD:-password123!}
     volumes:
       - wld_data:/var/lib/mysql
-      # @TODO replace with site .cache
       - ./sites:/sites
     networks:
       - wld-network

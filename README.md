@@ -9,7 +9,7 @@ Yes, just another WordPress ~~Site~~ Local Docker environment. I wanted to creat
 ### Prerequisites
 
 - Docker: https://docs.docker.com/get-docker/
-- Docker Compose: https://docs.docker.com/compose/install/
+- Docker Compose v2: https://docs.docker.com/compose/install/
 
 ## Usage
 
