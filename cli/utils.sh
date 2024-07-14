@@ -12,6 +12,7 @@ TEXT_BOLD="\e[1m"
 ### Colors
 TEXT_COLOR_GRAY="\e[30m"
 TEXT_COLOR_RED="\e[31m"
+TEXT_COLOR_RED_BOLD="\e[31;1m"
 TEXT_COLOR_GREEN="\e[32m"
 TEXT_COLOR_YELLOW="\e[33m"
 TEXT_COLOR_BLUE="\e[34m"
@@ -33,6 +34,18 @@ site_exists() {
   echo 0
 }
 
+are_all_services_running() {
+  local services_status=$(docker compose ps --services --filter "status=running")
+  local all_services=$(docker compose config --services)
+
+  for service in $all_services; do
+    if ! echo "$services_status" | grep -q "$service"; then
+      return 1
+    fi
+  done
+  return 0
+}
+
 get_wp_latest_version() {
   wp_latest_version=$(curl -s https://api.wordpress.org/core/version-check/1.7/ | grep -o '"version":"[^"]*' | head -1 | awk -F '"' '{print $4}')
   echo $wp_latest_version
@@ -48,14 +61,6 @@ reset_loading_animation() {
   printf "${CLEAR_PREV_LINE}"
   printf "\r\033[K${reset_txt}\n"
 }
-
-# loading_animation &
-# LOADING_PID=$!
-
-# # # Simulate some work with sleep
-# sleep 5  # Replace this with your actual work
-
-# reset_animation $LOADING_PID "Loading complete"
 
 loading_animation() {
   local loading_txt="${1:-Loading}"

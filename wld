@@ -1,10 +1,9 @@
 #!/usr/bin/env bash
-# set -euo pipefail
 
 # Make script location the source of the project
 export WLD_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 
-# Load and export all 
+# Load and export all
 set -a
 source "${WLD_DIR}/cli/utils.sh"
 set +a
@@ -12,33 +11,6 @@ set +a
 ALLOWED_FUNCTIONS=("scaffold" "site" "sites" "status" "rm")
 
 CMD_ARGUMENTS=("$@")
-
-parse_flags() {
-    while [[ "$#" -gt 0 ]]; do
-        case $1 in
-        -s=* | --site=*)
-            # Extract the value by removing the '-s=' or '--site=' part
-            site="${1#*=}"
-            echo "Site option selected with value: $site"
-            ;;
-        -h | --help)
-            echo "Displaying help!"
-            ;;
-        *)
-            if [[ "$1" == *"="* ]]; then
-                key="${1%%=*}"
-                value="${1#*=}"
-                echo "Parsed key-value pair: $key=$value"
-            # else
-            #     echo "Unknown option or missing value for: $1"
-            fi
-            ;;
-        esac
-        shift # Move to the next argument
-    done
-
-    set -- "${CMD_ARGUMENTS[@]}"
-}
 
 # Define function to call other scripts
 call_script() {
@@ -55,6 +27,12 @@ call_script() {
 }
 
 function main() {
+    # Test services
+    if ! are_all_services_running; then
+        printf "${TEXT_COLOR_RED_BOLD}Error!${TEXT_STYLE_RESET} Some services are not running. Run 'docker compose up'. \n"
+        return
+    fi
+
     local func_name="$1"
     local found=0
 
@@ -65,10 +43,17 @@ function main() {
         fi
     done
 
-    parse_flags "$@"
-
-    if [[ $found -eq 1 ]]; then
+    if [[ "$found" -eq 1 ]]; then
         call_script "$@"
+    elif [[ "$1" == "--" ]]; then
+        current_dir=$(pwd)
+        for SITE in $SITES; do
+            if [[ "$current_dir" == *"$SITE"* ]]; then
+                call_script "site" "$SITE" "--" "${@:2}"
+                return
+            fi
+        done
+        echo "This is not a valid WordPress install."
     else
         echo "Error: Function '$func_name' not allowed."
     fi
@@ -77,8 +62,3 @@ function main() {
 main "$@"
 
 exit 0
-
-# ~/
-# wld wp user list --site=dspoke.local
-# ./wld/sites/dspoke.local
-# wld wp user list
