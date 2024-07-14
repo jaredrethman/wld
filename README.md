@@ -34,30 +34,17 @@ If you're happy with the details, respond with `y`. This will:
 Once above has concluded you should see the below in your terminal.
 > Site created, visit: https://test.local/wp-admin
 
-<!-- ### Manually
-This section outlines the manual approach to getting a site up and running.
-
-1. `cd` into this project.
-2. Open terminal and run `export DOMAIN_NAME=test.local` to make your domain name available in subsequent commands (update "test.local" to your preferred local domain name).
-3. Clone scaffold files & folders `cp -r ./config/site-scaffold ./sites/${DOMAIN_NAME}`
-4. Create Nginx site conf `envsubst '${DOMAIN_NAME}' < ./config/nginx/nginx-site.conf.template > ./config/nginx/sites/${DOMAIN_NAME}.conf`
-5. Generate certs  (replace "test.local" with local domain):
-```bash
-openssl req -x509 -newkey rsa:2048 -nodes -keyout config/certs/test.local-key.pem -out config/certs/test.local.pem -days 365 -subj "/C=US/ST=State/L=City/O=Organization/CN=test.local"
-```
-6. [Download and install WordPress](https://wordpress.org/download/) into `./sites/test.local` (using your local domain). Make sure to leave the `.env` intact.
-8. Open `./sites/test.local/.env` and update
-7. Run `cp ./sites/test.local/wp-config-sample.php ./sites/test.local/wp-config.php` and update db details using host=mariadb  -->
-
 ### WP CLI
 For ease of use, a command for submitting [WP CLI](https://wp-cli.org/) commands to the relevant site on the PHP container was created. 
 
 ```bash
 wld site test.local -- wp user list
+# Or from within a `sites/test.local` directory
+wld -- wp user list
 ```
 VS.
 ```bash
-docker-compose exec php wp user list --allow-root --path="/var/www/html/test.local"
+docker compose exec php wp user list --allow-root --path="/var/www/html/test.local"
 ```
 
 ### Beware:
