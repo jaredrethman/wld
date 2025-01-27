@@ -19,6 +19,7 @@ RUN docker-php-ext-enable pdo_mysql
 # ini config
 COPY 10-error-reporting.ini \
     20-memory-limit.ini \
+    30-upload-max-filesize.ini \
     40-xdebug.ini \
     ${PHP_INI_DIR}/conf.d/
 

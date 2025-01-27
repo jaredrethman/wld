@@ -1,6 +1,8 @@
 #!/usr/bin/env bash
 
 # Variables
+## Docker
+DOCKER_COMPOSE_CMD="${DOCKER_COMPOSE_CMD:-docker compose}"
 ## Directories
 CLI_DIR="${WLD_DIR}/cli"
 SITES_DIR="${WLD_DIR}/sites"

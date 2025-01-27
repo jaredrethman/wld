@@ -31,6 +31,9 @@ services:
     links: 
       - mariadb
       - redis
+    # extra_hosts:
+    #   - "example.local:host-gateway"
+    #   - "example2.local:host-gateway"
     networks:
       - wld-network
 

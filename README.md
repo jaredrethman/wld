@@ -29,7 +29,7 @@ If you're happy with the details, respond with `y`. This will:
 * Create a directory, housing your sites local file system, inside `./sites` using the domain you specified.
 * Prompt for password and/or boimetric authentication to generate necessary certs. NB: macOS or [mkcert](https://github.com/FiloSottile/mkcert) required.
 * Generate site specific Nginx conf.
-* Build docker-compose or restart the nginx container.
+* Build Docker Compose or restart the nginx container.
 
 Once above has concluded you should see the below in your terminal.
 > Site created, visit: https://test.local/wp-admin

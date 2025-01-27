@@ -62,11 +62,11 @@ clone_domain_files() {
 }
 
 wpcli_install_site() {
-    docker-compose exec -T mariadb mysql --user="${MARIADB_USER}" --password="${MARIADB_PASSWORD}" <<-EOSQL
+    ${DOCKER_COMPOSE_CMD} exec -T mariadb mysql --user="${MARIADB_USER}" --password="${MARIADB_PASSWORD}" <<-EOSQL
         CREATE DATABASE IF NOT EXISTS \`${WORDPRESS_DB_NAME}\` CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
 EOSQL
     if [[ "$IS_MULTISITE" == "y" ]]; then
-        docker-compose exec php wp core multisite-install \
+        ${DOCKER_COMPOSE_CMD} exec php wp core multisite-install \
             --path="/var/www/html/${DOMAIN_NAME}" \
             --title="${WORDPRESS_SITE_TITLE}" \
             --admin_user="${WORDPRESS_ADMIN_USER}" \
@@ -75,7 +75,7 @@ EOSQL
             --skip-email \
             --allow-root &>/dev/null
     else
-        docker-compose exec php wp core install \
+        ${DOCKER_COMPOSE_CMD} exec php wp core install \
             --path="/var/www/html/${DOMAIN_NAME}" \
             --url="${WORDPRESS_URL}" \
             --title="${WORDPRESS_SITE_TITLE}" \
@@ -100,14 +100,14 @@ main() {
     # Download and configure WordPress file system
     sh "${WLD_DIR}/cli/install-wp-fs.sh" &>/dev/null
     # Sync site up with
-    if docker-compose ps | grep -q 'Up'; then
-        docker-compose restart nginx &>/dev/null
-        docker-compose restart php &>/dev/null
+    if ${DOCKER_COMPOSE_CMD} ps | grep -q 'Up'; then
+        ${DOCKER_COMPOSE_CMD} restart nginx &>/dev/null
+        ${DOCKER_COMPOSE_CMD} restart php &>/dev/null
     else
-        docker-compose up -d --build &>/dev/null
+        ${DOCKER_COMPOSE_CMD} up -d --build &>/dev/null
     fi
     while true; do
-        if docker-compose exec -T mariadb mysqladmin --user="${MARIADB_USER}" --password="${MARIADB_PASSWORD}" ping &>/dev/null; then
+        if docker compose exec -T mariadb mysqladmin --user="${MARIADB_USER}" --password="${MARIADB_PASSWORD}" ping &>/dev/null; then
             wpcli_install_site
             break
         else
